@@ -1,1 +1,220 @@
-"Test" 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Паролей и Проверка Надёжности</title>
+    <script src="password_generator.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input[type="number"],
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .form-group button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .result h2 {
+            margin-top: 0;
+            color: #444;
+        }
+        .result pre {
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Генератор Паролей и Проверка Надёжности</h1>
+        <form id="passwordForm">
+            <div class="form-group">
+                <label for="length">Длина пароля:</label>
+                <input type="number" id="length" name="length" value="24" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="customCharset">Пользовательский набор символов:</label>
+                <input type="text" id="customCharset" name="customCharset">
+            </div>
+            <div class="form-group">
+                <label for="languageCharset">Языковой набор символов:</label>
+                <input type="text" id="languageCharset" name="languageCharset">
+            </div>
+            <div class="form-group">
+                <label for="separator">Разделитель:</label>
+                <input type="text" id="separator" name="separator" value="-">
+            </div>
+            <div class="form-group">
+                <label for="groupSize">Размер группы:</label>
+                <input type="number" id="groupSize" name="groupSize" value="4" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="outputFormat">Формат вывода:</label>
+                <select id="outputFormat" name="outputFormat">
+                    <option value="plain">Обычный</option>
+                    <option value="json">JSON</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Опции:</label>
+                <div>
+                    <input type="checkbox" id="optLowercase" name="optLowercase">
+                    <label for="optLowercase">Строчные буквы</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optUppercase" name="optUppercase">
+                    <label for="optUppercase">Прописные буквы</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optDigits" name="optDigits">
+                    <label for="optDigits">Цифры</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optSpecial" name="optSpecial">
+                    <label for="optSpecial">Специальные символы</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optNoDigits" name="optNoDigits">
+                    <label for="optNoDigits">Без цифр</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optSeparators" name="optSeparators">
+                    <label for="optSeparators">Разделители</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optFullAscii" name="optFullAscii">
+                    <label for="optFullAscii">Полный ASCII</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optAvoidSimilar" name="optAvoidSimilar">
+                    <label for="optAvoidSimilar">Избегать похожих символов</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optNoRepeat" name="optNoRepeat">
+                    <label for="optNoRepeat">Без повторяющихся символов</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="optRandomCase" name="optRandomCase">
+                    <label for="optRandomCase">Случайный регистр</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="generatePassword()">Сгенерировать пароль</button>
+            </div>
+        </form>
+        <div class="form-group">
+            <label for="checkPassword">Проверить надёжность пароля:</label>
+            <input type="password" id="checkPassword" name="checkPassword">
+            <button type="button" onclick="checkPasswordStrength()">Проверить надёжность</button>
+        </div>
+        <div class="result">
+            <h2>Сгенерированный пароль:</h2>
+            <pre id="generatedPassword"></pre>
+            <h2>Надёжность пароля:</h2>
+            <pre id="passwordStrength"></pre>
+        </div>
+    </div>
+
+    <script>
+        function generatePassword() {
+            var length = parseInt(document.getElementById('length').value);
+            var customCharset = document.getElementById('customCharset').value;
+            var languageCharset = document.getElementById('languageCharset').value;
+            var separator = document.getElementById('separator').value;
+            var groupSize = parseInt(document.getElementById('groupSize').value);
+            var outputFormat = document.getElementById('outputFormat').value;
+
+            var options = 0;
+            if (document.getElementById('optLowercase').checked) options |= (1 << 0);
+            if (document.getElementById('optUppercase').checked) options |= (1 << 1);
+            if (document.getElementById('optDigits').checked) options |= (1 << 2);
+            if (document.getElementById('optSpecial').checked) options |= (1 << 3);
+            if (document.getElementById('optNoDigits').checked) options |= (1 << 4);
+            if (document.getElementById('optSeparators').checked) options |= (1 << 5);
+            if (document.getElementById('optFullAscii').checked) options |= (1 << 6);
+            if (document.getElementById('optAvoidSimilar').checked) options |= (1 << 7);
+            if (document.getElementById('optNoRepeat').checked) options |= (1 << 8);
+            if (document.getElementById('optRandomCase').checked) options |= (1 << 9);
+
+            var password = Module.ccall('generatePasswordWithOptions', 'string', ['int', 'int', 'string', 'int', 'string', 'string', 'string'], [length, options, separator, groupSize, customCharset, languageCharset, outputFormat]);
+
+            document.getElementById('generatedPassword').textContent = password;
+
+            // Оценка надёжности пароля
+            var strengthInfo = Module.ccall('getPasswordStrengthInfo', 'string', ['string'], [password]);
+            document.getElementById('passwordStrength').textContent = strengthInfo;
+        }
+
+        function checkPasswordStrength() {
+            var password = document.getElementById('checkPassword').value;
+            var strengthInfo = Module.ccall('getPasswordStrengthInfo', 'string', ['string'], [password]);
+            document.getElementById('passwordStrength').textContent = strengthInfo;
+        }
+    </script>
+</body>
+</html>
